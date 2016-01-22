@@ -6,7 +6,11 @@
 				<source>Show</source>
 				<target>Anzeigen</target>
 			</trans-unit>
-			<trans-unit id="form.input.placeholder" xml:space="preserve">
+			<trans-unit id="form.input.username_placeholder" xml:space="preserve">
+				<source>Username</source>
+				<target>Benutzername</target>
+			</trans-unit>
+			<trans-unit id="form.input.password_placeholder" xml:space="preserve">
 				<source>Password</source>
 				<target>Passwort</target>
 			</trans-unit>
@@ -15,8 +19,12 @@
 				<target>Dieser Inhalt erfordert die Eingabe eines Passwortes.</target>
 			</trans-unit>
 			<trans-unit id="password_incorrect" xml:space="preserve">
-				<source>The password you entered was incorrect</source>
+				<source>The password you entered was incorrect.</source>
 				<target>Das eingegebene Passwort ist nicht korrekt.</target>
+			</trans-unit>
+			<trans-unit id="user_or_password_incorrect" xml:space="preserve">
+				<source>The credentials you entered are incorrect.</source>
+				<target>Die Zugangsdaten sind nicht korrekt.</target>
 			</trans-unit>
 		</body>
 	</file>

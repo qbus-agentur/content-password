@@ -5,7 +5,10 @@
 			<trans-unit id="form.button.show" xml:space="preserve">
 				<source>Show</source>
 			</trans-unit>
-			<trans-unit id="form.input.placeholder" xml:space="preserve">
+			<trans-unit id="form.input.username_placeholder" xml:space="preserve">
+				<source>Username</source>
+			</trans-unit>
+			<trans-unit id="form.input.password_placeholder" xml:space="preserve">
 				<source>Password</source>
 			</trans-unit>
 			<trans-unit id="locked.default" xml:space="preserve">
@@ -13,6 +16,9 @@
 			</trans-unit>
 			<trans-unit id="password_incorrect" xml:space="preserve">
 				<source>The password you entered was incorrect</source>
+			</trans-unit>
+			<trans-unit id="user_or_password_incorrect" xml:space="preserve">
+				<source>The credentials you entered are incorrect</source>
 			</trans-unit>
 		</body>
 	</file>

@@ -32,6 +32,31 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 class ContentPasswordController extends \TYPO3\CMS\Extbase\Mvc\Controller\ActionController
 {
+    protected $mode = '';
+
+    public function initializeAction()
+    {
+        $cObj = $this->configurationManager->getContentObject();
+        if ($cObj->data['CType'] !== 'gridelements_pi1') {
+            // throw exception?
+            // this controller should only be used inside the gridelement "content_password"
+        }
+
+        $layout = $cObj->data['tx_gridelements_backend_layout'];
+        if (!in_array($layout, ['content_password', 'content_password_ldap'])) {
+            // throw exception?
+            // this controller should only be used inside the gridelement "content_password"
+        }
+
+        if ($layout == 'content_password') {
+            $this->mode = 'password';
+        }
+
+        if ($layout == 'content_password_ldap') {
+            $this->mode = 'ldap';
+        }
+    }
+
     /**
      * action main
      *
@@ -42,8 +67,10 @@ class ContentPasswordController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
         $cObj = $this->configurationManager->getContentObject();
         $until = (int) $cObj->data['flexform_protection_until'];
 
-        if ($cObj->data['flexform_password'] === '') {
-            return $cObj->data['tx_gridelements_view_column_0'];
+        if ($this->mode == 'password') {
+            if ($cObj->data['flexform_password'] === '') {
+                return $cObj->data['tx_gridelements_view_column_0'];
+            }
         }
 
         if ($until) {
@@ -54,30 +81,21 @@ class ContentPasswordController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
             $this->setCacheMaxExpiry($timeout);
         }
 
-        if ($cObj->data['CType'] !== 'gridelements_pi1' ||
-            $cObj->data['tx_gridelements_backend_layout'] !== 'content_password') {
-            // throw exception?
-            // this controller should only be used inside the gridelement "content_password"
-        }
-
         $this->view->assign('contentObject', $cObj->data);
+        $this->view->assign('mode', $this->mode);
     }
 
     /**
      * action unlock
      *
+     * @param  string $username
      * @param  string $password
      * @param  int    $unlockid
      * @return void
      */
-    public function unlockAction($password = '', $unlockid = 0)
+    public function unlockAction($username = '', $password = '', $unlockid = 0)
     {
         $cObj = $this->configurationManager->getContentObject();
-        if ($cObj->data['CType'] !== 'gridelements_pi1' ||
-            $cObj->data['tx_gridelements_backend_layout'] !== 'content_password') {
-            // throw exception?
-            // this controller should only be used inside the gridelement "content_password"
-        }
 
         if ($unlockid != $cObj->data['uid']) {
             // render main, another content_password element one the same page was triggered
@@ -86,14 +104,49 @@ class ContentPasswordController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
 
         $desired_password = $cObj->data['flexform_password'];
 
-        if (!($desired_password === '' ||
-              $desired_password === $password)) {
-            $message = LocalizationUtility::translate('password_incorrect', 'content_password');
-            $this->addFlashMessage($message, '', AbstractMessage::ERROR, false);
-            $this->forward('main');
+        if ($this->mode == 'password') {
+            if (!($desired_password === '' ||
+                  $desired_password === $password)) {
+                $message = LocalizationUtility::translate('password_incorrect', 'content_password');
+                $this->addFlashMessage($message, '', AbstractMessage::ERROR, false);
+                $this->forward('main');
+            }
+        } elseif ($this->mode == 'ldap') {
+            if (!$this->checkLdap($username, $password)) {
+                $message = LocalizationUtility::translate('user_or_password_incorrect', 'content_password');
+                $this->addFlashMessage($message, '', AbstractMessage::ERROR, false);
+                $this->forward('main');
+            }
         }
 
         return $cObj->data['tx_gridelements_view_column_0'];
+    }
+
+    protected function checkLdap($username, $password)
+    {
+        if ($username == '' || $password == '')
+            return false;
+
+        $server = '';
+        if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['content_password'])) {
+            $extensionConfig = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['content_password']);
+        } else {
+            return false;
+        }
+
+        if (isset($extensionConfig['ldapServer'])) {
+            $server = $extensionConfig['ldapServer'];
+        } else {
+            // TODO
+            return false;
+        }
+
+        $con = ldap_connect($server, 389);
+        if (!$con)
+            return false;
+        $result = @ldap_bind($con, $username, $password);
+
+        return $result === true;
     }
 
     /* FIXME: This function is a HACK

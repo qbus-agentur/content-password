@@ -11,7 +11,10 @@
 <f:form action="unlock" class="form-inline tx-content-password-form">
 	<div class="form-group">
 		<f:form.hidden name="unlockid" value="{contentObject.uid}"/>
-		<f:form.textfield name="password" class="form-control" placeholder="{f:translate(key: 'form.input.placeholder')}"/>
+		<f:if condition="{mode} == 'ldap'">
+			<f:form.textfield name="username" class="form-control" placeholder="{f:translate(key: 'form.input.username_placeholder')}"/>
+		</f:if>
+		<f:form.textfield type="password" name="password" class="form-control" placeholder="{f:translate(key: 'form.input.password_placeholder')}"/>
 		<f:form.submit class="btn btn-primary" value="{f:translate(key: 'form.button.show')}"/>
 	</div>
 </f:form>
