@@ -141,7 +141,9 @@ class ContentPasswordController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
             return false;
         }
 
-        $con = ldap_connect($server, 389);
+        putenv('LDAPTLS_REQCERT=never');
+        $con = ldap_connect($server);
+        ldap_set_option($con, LDAP_OPT_PROTOCOL_VERSION, 3);
         if (!$con)
             return false;
         $result = @ldap_bind($con, $username, $password);
