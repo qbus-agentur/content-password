@@ -1,2 +1,5 @@
 # cat=basic; type=string; label=LDAP Server
 ldapServer =
+
+# cat=basic; type=string; label=LDAP Domain
+ldapDomain =

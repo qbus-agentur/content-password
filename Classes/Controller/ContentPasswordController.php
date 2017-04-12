@@ -128,6 +128,7 @@ class ContentPasswordController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
             return false;
 
         $server = '';
+        $domain = '';
         if (isset($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['content_password'])) {
             $extensionConfig = unserialize($GLOBALS['TYPO3_CONF_VARS']['EXT']['extConf']['content_password']);
         } else {
@@ -139,6 +140,11 @@ class ContentPasswordController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
         } else {
             // TODO
             return false;
+        }
+
+        if (isset($extensionConfig['ldapDomain'])) {
+            $domain = $extensionConfig['ldapDomain'];
+            $username = $username . '@' . $domain;
         }
 
         putenv('LDAPTLS_REQCERT=never');
