@@ -142,7 +142,7 @@ class ContentPasswordController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
             return false;
         }
 
-        if (isset($extensionConfig['ldapDomain'])) {
+        if (isset($extensionConfig['ldapDomain']) && $extensionConfig['ldapDomain']) {
             $domain = $extensionConfig['ldapDomain'];
             $username = $username . '@' . $domain;
         }
