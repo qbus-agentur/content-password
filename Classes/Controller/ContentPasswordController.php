@@ -124,6 +124,7 @@ class ContentPasswordController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
 
     protected function checkLdap($username, $password)
     {
+        $rawUsername = $username;
         if ($username == '' || $password == '')
             return false;
 
@@ -153,6 +154,32 @@ class ContentPasswordController extends \TYPO3\CMS\Extbase\Mvc\Controller\Action
         if (!$con)
             return false;
         $result = @ldap_bind($con, $username, $password);
+
+
+        if ($result !== true) {
+            return false;
+        }
+
+        if (isset($extensionConfig['ldapLockBaseDN']) && $extensionConfig['ldapLockBaseDN']) {
+            $baseDNs = GeneralUtility::trimExplode('|', $extensionConfig['ldapLockBaseDN'], true);
+            $validBaseDN = true;
+            if (!empty($baseDNs)) {
+                $validBaseDN = false;
+                foreach ($baseDNs as $baseDN) {
+                    $query = '(&(objectClass=person)(sAMAccountName=' . ldap_escape($rawUsername, '', LDAP_ESCAPE_FILTER) . '))';
+                    $resultSearch = ldap_search($con, $baseDN, $query, array('dn'), 1, 0);
+                    $count = ldap_count_entries($con, $resultSearch);
+                    ldap_free_result($resultSearch);
+                    if ($count > 0) {
+                        $validBaseDN = true;
+                        break;
+                    }
+                }
+                if (!$validBaseDN) {
+                    return false;
+                }
+            }
+        }
 
         return $result === true;
     }

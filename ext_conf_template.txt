@@ -3,3 +3,6 @@ ldapServer =
 
 # cat=basic; type=string; label=LDAP Domain
 ldapDomain =
+
+# cat=basic; type=string; label=LDAP BaseDN Restriction (Or-Condition using one pipe character '|')
+ldapLockBaseDN =
