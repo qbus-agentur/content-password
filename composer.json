@@ -18,6 +18,11 @@
         "typo3/cms-core": "^10.4",
         "gridelementsteam/gridelements": "^10"
     },
+    "extra": {
+        "typo3/cms": {
+            "extension-key": "content_password"
+        }
+    },
     "autoload": {
         "psr-4": {
             "Qbus\\ContentPassword\\": "Classes"
