@@ -15,8 +15,8 @@
     ],
     "license": "GPL-2.0-or-later",
     "require": {
-        "typo3/cms-core": "^7.6 || ^8.7 || ^9.5",
-        "gridelementsteam/gridelements": "^3 || ^4 || ^5 || ^7 || ^8 || ^9"
+        "typo3/cms-core": "^10.4",
+        "gridelementsteam/gridelements": "^10"
     },
     "autoload": {
         "psr-4": {
